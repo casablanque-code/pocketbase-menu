@@ -1,0 +1,224 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <link
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  rel="stylesheet"
+/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta charset="UTF-8" />
+  <title>Блюдо</title>
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background-color: #f7f9fc;
+      color: #333;
+      padding: 2vh 2vw;
+      text-align: center;
+    }
+    .dish {
+      max-width: 500px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 2vh 2vw;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    h1 {
+      font-size: 3vh;
+      margin-bottom: 1vh;
+    }
+    .description {
+      font-size: 1.8vh;
+      color: #666;
+      margin-bottom: 1vh;
+    }
+    .stars {
+      margin-top: 2vh;
+    }
+    .star {
+      font-size: 3vh;
+      cursor: pointer;
+      color: #ccc;
+      margin: 0 5px;
+    }
+
+
+    #dish-tags i.fa-pepper-hot {
+  color: red;
+}
+
+#dish-tags i.fa-leaf {
+  color: green;
+}
+
+  
+    @media (max-width: 768px) {
+      .dish {
+        width: 95%;
+        padding: 2vh 4vw;
+      }
+      #dish-photo {
+        max-height: 40vh;
+      }
+    }
+
+
+    body.dark-mode {
+      background-color: #2b2b2b;
+      color: #f1f1f1;
+    }
+
+    body.dark-mode .dish {
+      background-color: #3c3c3c;
+      box-shadow: none;
+    }
+
+    body.dark-mode .description {
+      color: #ccc;
+    }
+
+    body.dark-mode #back-button {
+      background-color: #444;
+      color: #eee;
+    }
+
+
+    body.dark-mode #back-button {
+      background-color: #ffffff22;
+      color: #ffffff;
+      border: 1px solid #888;
+    }
+
+</style>
+</head>
+<body>
+
+  <button id="back-button" onclick="history.back()" style="
+    position: fixed;
+    top: 1.5vh;
+    left: 2vw;
+    z-index: 100;
+    background-color: #dde4ec;
+    border: none;
+    border-radius: 8px;
+    padding: 0.5vh 1.2vw;
+    font-size: 1.6vh;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+  ">← Назад</button>
+
+  <div class="dish">
+    <h1 id="dish-name">Блюдо</h1>
+    <img id="dish-photo" style="width:100%; max-height:240px; object-fit:cover; border-radius:10px; margin:1vh 0;" alt="Фото блюда" />
+    <p class="description" id="dish-desc"></p>
+    <p class="description" id="dish-calories" style="font-size: 1.6vh; color: #555;"></p>
+    <div id="dish-tags" style="font-size:2vh; margin: 1vh 0;"></div>
+    <div class="stars" id="stars-container"></div>
+  </div>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const dishId = urlParams.get("id");
+    const starsContainer = document.getElementById("stars-container");
+    const storedRating = localStorage.getItem("rating_" + dishId);
+
+    function highlightStars(count) {
+      const stars = starsContainer.querySelectorAll(".star");
+      stars.forEach((star, i) => {
+        star.style.color = i < count ? "#f39c12" : "#ccc";
+      });
+    }
+
+    function submitRating(value) {
+      fetch("/pb/api/collections/ratings/records", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ dish: dishId, rating: value })
+      }).then(res => {
+        if (res.ok) {
+          localStorage.setItem("rating_" + dishId, value);
+          highlightStars(value);
+          alert("Спасибо за вашу оценку!");
+        } else {
+          alert("Ошибка при отправке оценки.");
+        }
+      });
+    }
+
+    function createStars() {
+      starsContainer.innerHTML = "";
+      for (let i = 1; i <= 5; i++) {
+        const star = document.createElement("span");
+        star.textContent = "★";
+        star.className = "star";
+        star.style.color = "#ccc";
+        star.addEventListener("mouseenter", () => {
+          if (!storedRating) highlightStars(i);
+        });
+        if (!storedRating) {
+          star.addEventListener("mouseleave", () => highlightStars(0));
+          star.addEventListener("click", () => submitRating(i));
+        }
+        starsContainer.appendChild(star);
+      }
+      if (storedRating) {
+        highlightStars(parseInt(storedRating));
+      }
+    }
+
+    async function loadDish() {
+      const res = await fetch(`/pb/api/collections/dishes/records/${dishId}`);
+      const data = await res.json();
+      document.getElementById("dish-name").textContent = data.name || "Блюдо";
+      document.getElementById("dish-desc").textContent = data.description || "";
+
+      const photo = document.getElementById("dish-photo");
+      if (data.photo) {
+        photo.src = `/pb/api/files/${data.collectionId}/${data.id}/${data.photo}`;
+        photo.alt = "Фото " + (data.name || "блюда");
+      } else {
+        photo.style.display = "none";
+      }
+
+
+      
+      const calBlock = document.getElementById("dish-calories");
+      if (data.calories) {
+        calBlock.textContent = `Калории: ${data.calories} ккал`;
+      } else {
+        calBlock.style.display = "none";
+      }
+
+
+      const tagsContainer = document.getElementById("dish-tags");
+if (data.tags && Array.isArray(data.tags)) {
+  const icons = data.tags.map(tag => {
+    const normalized = tag.toLowerCase().replace(/\s+/g, "");
+    switch (normalized) {
+      case "vegetarian": return '<i class="fa-solid fa-leaf"></i>';
+      case "lactosefree": return '<i class="fa-solid fa-cow"></i><i class="fa-solid fa-ban"></i>';
+      case "spicy": return '<i class="fa-solid fa-pepper-hot"></i>';
+      default: return "";
+    }
+  }).filter(Boolean).join(" ");
+  tagsContainer.innerHTML = icons;
+}
+
+
+    }
+
+    loadDish();
+if (localStorage.getItem("darkMode") === "true") {
+      document.body.classList.add("dark-mode");
+    }
+    createStars();
+document.addEventListener("DOMContentLoaded", function() {
+      if (localStorage.getItem("darkMode") === "true") {
+        document.body.classList.add("dark-mode");
+      }
+    });
+  </script>
+</body>
+</html>

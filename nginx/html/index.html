@@ -1,0 +1,572 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <link
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  rel="stylesheet"
+/>
+
+  <meta charset="UTF-8" />
+  <title>Меню</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <style>
+    .filter-buttons {
+      margin-bottom: 0.5vh;
+      display: flex;
+      gap: 1vw;
+      justify-content: center;
+    }
+
+    .filter-buttons button {
+      flex: 1;
+      font-size: 16px;
+      padding: 0.8vh 1.2vw;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background-color: #f0f4f8;
+      color: #333;
+      cursor: pointer;
+      max-width: 180px;
+      transition: all 0.2s ease-in-out;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .filter-buttons button:hover {
+      background-color: #e0e6ed;
+    }
+
+    .filter-buttons button:active {
+      transform: scale(0.97);
+      background-color: #d5dce5;
+    }
+
+    .meal-times {
+      text-align: center;
+      font-size: 1.4vh;
+      color: #666;
+      margin-bottom: 1.5vh;
+      text-align: center;
+    }
+
+    html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      font-family: "Segoe UI", sans-serif;
+      background-color: #e9ecef;
+      color: #333;
+      overflow: hidden;
+    }
+
+    body.dark-mode {
+      background-color: #2b2b2b;
+      color: #f1f1f1;
+    }
+
+    body.dark-mode .dish {
+      background-color: #3c3c3c;
+      box-shadow: none;
+    }
+
+    body.dark-mode .dish-description {
+      color: #ccc;
+    }
+
+    body.dark-mode .dish-price {
+      color: #90ee90;
+    }
+
+    body.dark-mode .filter-buttons button {
+      flex: 1;
+      font-size: 16px;
+      padding: 0.8vh 1.2vw;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background-color: #f0f4f8;
+      color: #333;
+      cursor: pointer;
+      max-width: 180px;
+      transition: all 0.2s ease-in-out;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .filter-buttons button:hover {
+      background-color: #e0e6ed;
+    }
+
+    .filter-buttons button:active {
+      transform: scale(0.97);
+      background-color: #d5dce5;
+    }
+
+    body.dark-mode .meal-times {
+      text-align: center;
+      color: #aaa;
+    }
+
+    #theme-toggle {
+      position: fixed;
+      bottom: 2vh;
+      left: 2vw;
+      background: #dde4ec;
+      border: none;
+      border-radius: 50%;
+      width: 5vh;
+      height: 5vh;
+      font-size: 2.5vh;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    body.dark-mode #theme-toggle {
+      background: #444;
+      color: #fff;
+    }
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      font-family: "Segoe UI", sans-serif;
+      background-color: #f7f9fc;
+      color: #333;
+      overflow: hidden;
+    }
+
+    #wrapper {
+      overflow: hidden;
+      height: 100%;
+      width: 100%;
+      padding: 1vh 2vw;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 3vh;
+      margin: 0.5vh 0;
+    }
+
+    #clock {
+      text-align: center;
+      font-size: 2vh;
+      margin-bottom: 1vh;
+      color: #777;
+    }
+
+    .filter-buttons {
+      margin-bottom: 1vh;
+    }
+
+    .filter-buttons button {
+      flex: 1;
+      font-size: 16px;
+      padding: 0.8vh 1.2vw;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background-color: #f0f4f8;
+      color: #333;
+      cursor: pointer;
+      max-width: 180px;
+      transition: all 0.2s ease-in-out;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .filter-buttons button:hover {
+      background-color: #e0e6ed;
+    }
+
+    .filter-buttons button:active {
+      transform: scale(0.97);
+      background-color: #d5dce5;
+    }
+
+    .menu {
+      flex: 1;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: start;
+      align-items: center;
+    }
+
+    .section {
+      width: 100%;
+      text-align: center;
+    }
+
+    .section h2 {
+      font-size: 2.4vh;
+      margin: 1vh 0 0.5vh;
+    }
+
+    .dishes {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.8vh;
+      width: 100%;
+    }
+
+    .dish {
+      background: #fff;
+      border-radius: 10px;
+      padding: 0.8vh 2vw;
+      width: 90%;
+      max-width: 1000px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+      box-sizing: border-box;
+      display: block;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .dish-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+
+    .dish-name {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4em;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4em;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4em;
+      font-size: 2vh;
+      font-weight: bold;
+      text-align: left;
+    }
+
+    .dish-price {
+      font-size: 2.2vh;
+      font-weight: bold;
+      color: #27ae60;
+      white-space: nowrap;
+    }
+
+    .dish-description {
+      font-size: 1.6vh;
+      color: #555;
+      margin-top: 0.2vh;
+      text-align: left;
+    }
+
+    .qr {
+      position: fixed;
+      bottom: 1vh;
+      right: 1vw;
+    }
+
+    .qr img {
+      width: 12vh;
+      height: 12vh;
+    }
+
+    .compact .dish-name {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4em;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4em;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4em;
+      font-size: 1.6vh;
+    }
+
+    .compact .dish-description {
+      font-size: 1.4vh;
+    }
+
+    .compact .dish-price {
+      font-size: 1.7vh;
+    }
+
+    .compact .dish {
+      padding: 0.4vh 1.5vw;
+    }
+  
+    .dish-tags {
+      font-size: 1.8vh;
+      vertical-align: middle;
+    }
+
+
+
+
+
+
+
+
+    .dish-tags i.fa-pepper-hot {
+  color: red;
+}
+
+.dish-tags i.fa-leaf {
+  color: green;
+}
+
+
+/* Скрываем кнопки фильтрации на десктопе */
+@media (min-width: 769px) {
+  .filter-buttons {
+    display: none;
+  }
+
+  #clock {
+    font-size: 3vh; /* увеличить размер часов */
+  }
+}
+
+@media (min-width: 769px) {
+  .filter-buttons {
+    display: none;
+  }
+
+  #clock {
+    font-size: 3vh;
+  }
+  
+  .meal-times {
+    display: none;
+  }
+}
+
+
+
+
+
+
+
+    @media (max-width: 768px) {
+      body {
+        overflow-y: auto;
+      }
+
+      .qr {
+        display: none;
+      }
+
+      .dish {
+        width: 95%;
+        margin-bottom: 0.5vh;
+      }
+
+      .dishes {
+        gap: 0.6vh;
+      }
+    }
+
+    @media (orientation: portrait) {
+      .dish {
+        width: 95%;
+      }
+    }
+    }
+    }
+
+
+input, button, select, textarea {
+  font: inherit;
+  font-size: 100%;
+}
+
+
+    @media (max-width: 768px) {
+      #wrapper {
+        padding: 1vh 2vw;
+      }
+
+      .dish-name {
+        font-size: 1.6vh;
+      }
+
+      .dish-description {
+        font-size: 1.4vh;
+      }
+
+      .dish-price {
+        font-size: 1.7vh;
+      }
+
+      .dish {
+        padding: 0.4vh 1.5vw;
+      }
+    }
+
+</style>
+</head>
+<body>
+  <div id="wrapper">
+    <h1>Меню</h1>
+    <div id="clock"></div>
+    <div class="filter-buttons">
+      <button onclick="filterMenu('Завтрак (7:00 - 10:30)')">Завтрак  <i class="fa-solid fa-mug-hot"></i></i></button>
+      <button onclick="filterMenu('Обед (12:00 - 15:30)')">Обед  <i class="fa-solid fa-utensils"></i></button>
+      <button onclick="filterMenu('Ужин (17:00 - 21:00)')">Ужин  <i class="fa-solid fa-bowl-rice"></i></button>
+    </div>
+    <div class="meal-times">Завтрак: 7:00-10:30 | Обед: 12:00-15:30 | Ужин: 16:30-21:00</div>
+    <div class="menu" id="menu-container"></div>
+  </div>
+
+  <button id="theme-toggle">☀️</button>
+
+  <div class="qr">
+    <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=http://62.84.126.106:8081/menu/" alt="QR">
+  </div>
+
+  <script>
+    const container = document.getElementById("menu-container");
+    const clock = document.getElementById("clock");
+
+    function updateClock() {
+      const now = new Date();
+      clock.textContent = now.toLocaleTimeString("ru-RU");
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    function filterMenu(section) {
+      document.querySelectorAll(".section").forEach(s => {
+        if (section === "Все" || s.dataset.name === section) {
+          s.style.display = "block";
+        } else {
+          s.style.display = "none";
+        }
+      });
+      
+    }
+
+    function autoSelectMeal() {
+      const hour = new Date().getHours();
+      if (hour >= 7 && hour < 12) return "Завтрак (7:00 - 10:30)";
+      if (hour >= 12 && hour < 17) return "Обед (12:00 - 15:30)";
+      if (hour >= 17 && hour < 24) return "Ужин (17:00 - 21:00)";
+      return "Все";
+    }
+
+    async function loadMenu() {
+      const today = new Date().toISOString().split("T")[0];
+      const url = `/pb/api/collections/menuday/records?filter[date]=${today}&expand=dishes`;
+
+      try {
+        const res = await fetch(url);
+        const json = await res.json();
+        container.innerHTML = "";
+
+        json.items.forEach(item => {
+          const section = document.createElement("div");
+          section.className = "section";
+          section.dataset.name = item.name || "";
+
+          const h2 = document.createElement("h2");
+          h2.textContent = item.name;
+          section.appendChild(h2);
+
+          const dishList = document.createElement("div");
+          dishList.className = "dishes";
+
+          (item.expand?.dishes || []).forEach(dish => {
+            const card = document.createElement("a");
+            card.href = `/menu/dish.html?id=${dish.id}`;
+            card.className = "dish";
+            card.innerHTML = `
+              <div class="dish-header">
+                <div class="dish-name">
+                  ${dish.name}
+                  <span class="dish-tags">
+                    ${(dish.tags || []).map(tag => {
+                      const normalized = tag.toLowerCase().replace(/\s+/g, "");
+                      switch (normalized) {
+                        case "vegetarian": return '<i class="fa-solid fa-leaf"></i>';
+                        case "lactosefree": return '<i class="fa-solid fa-cow"></i><i class="fa-solid fa-ban"></i>';
+                        case "spicy": return '<i class="fa-solid fa-pepper-hot"></i>';
+                        default: return "";
+                      }
+                    }).join(" ")}
+                  </span>
+                </div>
+                <div class="dish-price">${dish.price} &#2547;</div>
+              </div>
+              <div class="dish-description">${dish.description || ""}</div>
+            `;
+            dishList.appendChild(card);
+          });
+
+          section.appendChild(dishList);
+          container.appendChild(section);
+        });
+
+        filterMenu(autoSelectMeal());
+      } catch (e) {
+        container.innerHTML = "<p style='color:red;'>Ошибка загрузки меню.</p>";
+        console.error(e);
+      }
+    }
+
+    function resizeIfNeeded() {
+      const wrapper = document.getElementById("wrapper");
+      if (wrapper.scrollHeight > window.innerHeight) {
+        wrapper.classList.add("compact");
+      } else {
+        wrapper.classList.remove("compact");
+      }
+    }
+
+window.addEventListener("resize", resizeIfNeeded);
+loadMenu();
+setInterval(loadMenu, 300000);
+
+const themeToggle = document.getElementById('theme-toggle');
+
+function applyAutoDarkMode() {
+  const hour = new Date().getHours();
+  const savedPreference = localStorage.getItem("darkMode");
+
+  if (savedPreference === "true" || (!savedPreference && (hour >= 18 || hour < 6))) {
+    document.body.classList.add('dark-mode');
+    localStorage.setItem("darkMode", "true");
+  } else {
+    document.body.classList.remove('dark-mode');
+    localStorage.setItem("darkMode", "false");
+  }
+}
+
+// Функция для синхронизации иконки с текущим состоянием темы
+function syncThemeIcon() {
+  const isDark = document.body.classList.contains('dark-mode');
+  themeToggle.textContent = isDark ? "☀️" : "🌙";
+}
+
+// При загрузке страницы применяем тему и синхронизируем иконку
+window.addEventListener('load', () => {
+  applyAutoDarkMode();
+  syncThemeIcon();
+});
+
+// Обработчик клика по кнопке переключения темы
+themeToggle.addEventListener('click', () => {
+  const isDark = document.body.classList.toggle('dark-mode');
+  themeToggle.textContent = isDark ? "☀️" : "🌙";
+  localStorage.setItem("darkMode", isDark ? "true" : "false");
+});
+
+  </script>
+</body>
+</html>
